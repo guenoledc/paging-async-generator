@@ -1,0 +1,20 @@
+{
+  "name": "paging-async-generator",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "guenoledc@yahoo.fr",
+  "license": "ISC",
+  "description": "Provides a nice way to iterate over asynchronous calls without waiting for them while managing the size of the concurrent calls",
+  "dependencies": {
+    "node-fetch": "^2"
+  },
+  "devDependencies": {
+    "axios": "^0.27.2",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4"
+  }
+}
