@@ -76,19 +76,20 @@ async function todo3() {
   //   else console.log(r.page, r.index, r.value);
   // }
   
+  // console.log("===========");
+  // const array = [
+  //   // todo.bind(undefined, 1, 1),
+  //   // todo.bind(undefined, 1, 2),
+  //   // todo.bind(undefined, 1, 3),
+  //   // todo.bind(undefined, 2, 1),
+  //   // todo.bind(undefined, 2, 2),
+  //   // todo.bind(undefined),
+  //   ...new Array(100).fill(1).map((v,i)=>todo.bind(undefined, 0, i))
+  // ]
+  // for await (let r  of pIt(array, 8, {keepOrder:false})) {
+  //   if (r.error) console.log("Fail", r.error.message)
+  //   else console.log("Processed call", r.page, r.index, r.value.id, r.value.title);
+  // }
   console.log("===========");
-  const array = [
-    // todo.bind(undefined, 1, 1),
-    // todo.bind(undefined, 1, 2),
-    // todo.bind(undefined, 1, 3),
-    // todo.bind(undefined, 2, 1),
-    // todo.bind(undefined, 2, 2),
-    // todo.bind(undefined),
-    ...new Array(100).fill(1).map((v,i)=>todo.bind(undefined, 0, i))
-  ]
-  for await (let r  of pIt(array, 8, {keepOrder:false})) {
-    if (r.error) console.log("Fail", r.error.message)
-    else console.log("Processed call", r.page, r.index, r.value.id, r.value.title);
-  }
 
 })()
