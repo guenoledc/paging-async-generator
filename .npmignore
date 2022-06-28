@@ -1,0 +1,6 @@
+src/*.ts
+/*.spec.ts
+tsconfig.json
+# .eslintrc.json
+# /*.js
+sample/index*

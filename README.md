@@ -182,7 +182,7 @@ for await (let v of pIt(array, array.length)) {
   console.log("computed:", v.value)
 }
 ```
-outputs: (note that the multiplication is displayed after the additions)
+outputs: (note that the multiplication is displayed after the additions since it takes more time to compute and the results are not ordered)
 ```
 computed: 3
 computed: 11

@@ -4,16 +4,25 @@
 // AUTHOR: Guénolé de Cadoudal (guenoledc@yahoo.fr)
 // Date: 26/06/1974
 // ############################################################
-import timer from 'timers/promises';
 
+/**
+ * Options for the pagingGenerator.    
+ * Templated with type T being the type returned by the asynchronous callback function
+ */
 export interface PagingOptions<T = any> {
+  /** called after each call of the `asyncFunc` with the result to determine if the value should be considered as the last to retrieved */
   isLast:(v:T)=>boolean;
+  /** called after each call of the `asyncFunc` with the result to determine if the value is to be considered as an error */
   isError:(v:T)=>boolean;
+  /** tells the iterator to return the result in the order they were called. If false, the results in a page appear in the order they completed (faster reponses first). If true, the results appear in the order they were made. */
   keepOrder: boolean;
+  /** the max numbers of errors to accept before the iterator returns an error. -1 means no error counting.  */
   maxErrors: number;
+  /** indicates to throw if more than maxErrors have been detected or to quietly finish the iteration. */
   throwOnMaxError: boolean;
 }
 
+// default options when a field is not specified
 const defaultOptions:PagingOptions = {
   isLast:(v)=>v==undefined,
   isError:(v)=>v instanceof Error,
@@ -22,12 +31,26 @@ const defaultOptions:PagingOptions = {
   throwOnMaxError: false
 }
 
+/**
+ * Type of function that takes
+ * @param page : receives the page index, from zero
+ * @param index : receive the index of the call in the page
+ * @returns A promise of type T
+ * This function type is the format of the function that is expected to be called by the pagingGenerator
+ */
 export type PagingAsyncCallback<T = any> = (page?:number, index?:number) => Promise<T>;
 
+/**
+ * The structure that the iterator created by the pagingGenerator returns when using `it.next().value` 
+ */
 export interface PagingResult<T = any>{
+  /** The value returned by the `PagingAsyncCallback<T>` */
   value: T | undefined;
+  /** Any error raised by the `PagingAsyncCallback<T>` */
   error: any;
+  /** the page index when calling the async callback */
   page: number;
+  /** the index in the page when calling the async callback */
   index: number;
 }
 
@@ -38,6 +61,9 @@ interface PagingResultIntermediary<T = any> extends PagingResult<T> {
 type PagingAsyncGeneratorIntermediary<T> = AsyncGenerator<PagingResultIntermediary<T>, PagingResultIntermediary<T>, PagingResultIntermediary<T>>
 type PagingAsyncGenerator<T> = AsyncGenerator<PagingResult<T>, PagingResult<T>, PagingResult<T>>
 
+/**
+ * Error class for the `pagingGenerator`. It contains the `page` index and the `index` in the page
+ */
 export class PagingError extends Error {
   constructor(message: string, public page:number, public index: number) {
     super(message)
@@ -104,7 +130,7 @@ async function* pageGenerator<T = any>(
     } 
     else {
       // no result yet, pause to work on other activities of the program
-      await timer.setImmediate();
+      await new Promise( r=>setImmediate(r) );
     }
   }
   // console.log("finished page");
@@ -112,6 +138,14 @@ async function* pageGenerator<T = any>(
   else return {done: true, page, value: undefined, error: undefined, index:-1}
 }
 
+
+/**
+ * Creates an iterator that calls `asyncCallback` in advance by group of `pageSize` and delivers them one by one and continue on the next page (or group)
+ * @param asyncCallback an synchronous function that will be called until its result is considered as the last (see `isLast()` in the options). Or an array of these functions each being called only once.
+ * @param pageSize The number of calls to perform in parallel in advance of the value being read
+ * @param options The options to configure the behaviour of the iterator. @see PagingOptions
+ * @returns An AsyncGenerator that can be iterated over with `for await(let res of pagingGenerator(..)) {}` of with `it = pagingGenerator(..); await it.next(); await it.next(); ...`
+ */
 export async function* pagingGenerator<T>(
     asyncCallback: PagingAsyncCallback<T>|PagingAsyncCallback<T>[], 
     pageSize: number, 
