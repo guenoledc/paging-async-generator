@@ -1,7 +1,11 @@
 {
   "name": "paging-async-generator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guenoledc/paging-async-generator.git"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "echo npm_config_dry_run:$npm_config_dry_run && if test ${npm_config_dry_run:-false} != 'true' ; then npm version patch --no-git-tag-version; fi",
@@ -9,7 +13,15 @@
     "build:wp-ns": "webpack --no-stats",
     "build:wp": "webpack"
   },
-  "keywords": [],
+  "keywords": [
+    "async",
+    "iterator",
+    "generator",
+    "pagination",
+    "page",
+    "preloading",
+    "parallel"
+  ],
   "author": "guenoledc@yahoo.fr",
   "license": "ISC",
   "description": "Provides a nice way to iterate over asynchronous calls without waiting for them while managing the size of the concurrent calls",
